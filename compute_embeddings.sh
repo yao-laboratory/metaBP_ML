@@ -6,6 +6,7 @@
 #SBATCH --output=/path/to/file.out
 #SBATCH --partition=yaolab,batch
 
+module unload python
 module load anaconda
 conda activate $HOME/.conda/envs/metabp_ml
 
