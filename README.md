@@ -7,7 +7,7 @@ To setup the conda environment needed to compute the mean vectors, run:
 `conda env create -f environment.yml`
 
 
-## Creating a job
+## Creating a job to create mean vectors
 
 Refer to `compute_embeddings.sh` as a bash job to run. 
 
