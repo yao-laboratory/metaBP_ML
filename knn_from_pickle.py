@@ -7,14 +7,13 @@ import numpy as np
 import pandas as pd
 import time
 
-db_file = "./peptide_db.pkl"
-print("Loading database at " + str(datetime.now()))
-with open(db_file, "rb") as f:
-    peptide_db = pickle.load(f)
-print("Database loaded at " + str(datetime.now()))
+def load_database(db_file):
+    print("Loading database at " + str(datetime.now()))
+    with open(db_file, "rb") as f:
+        peptide_db = pickle.load(f)
+    print("Database loaded at " + str(datetime.now()))
+    return peptide_db
 
-#global variable for db
-db=peptide_db
 
 
 def nearest_k_neighbors(threshold, k, input_protein):
@@ -60,8 +59,9 @@ def main(thread):
     return result_df
 '''
 
-def main(input_file, output_file, nodes):
-    
+def main(input_file, output_file, nodes, db_file):
+    #global variable for db
+    db=load_database(db_file)
     num_thread=nodes
     threshold=9999999999
     k=10
@@ -98,10 +98,14 @@ def parse_args():
         "--nodes",
         default=24
     )
+    parser.add_argument(
+        "--db",
+        help="A path to the .pkl file for the peptide database",
+    )
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
     args = parse_args()
-    main(args.input_file, args.output_file, args.nodes)
+    main(args.input_file, args.output_file, args.nodes, args.db)
