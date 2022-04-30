@@ -22,7 +22,10 @@ The general format of the command looks something like this:
 ```
 This command must be run in the same environment as the command to create the mean vectors. The xml file for this environment can be found in the repository (environment.yml). This environment is named metabp_ml and contains all the necessary packages for the scripts to run without error. 
 
-### MetaBP Annotation Output Files
+## MetaBP Annotation Output Files
 - vectors.pkl: mean vector pickle file
 - knn_output.csv: file containing the id for each sequence, as well as the ids for the 10 nearest neighbors
 - annotated_sequences.csv: file containing the sequence ids and the annotation information based on nearest neighbors (the taxonomic id, the species, and the EC number)
+
+## Database File Format
+Annotating the peptides requires access to a .pkl file of vectorized protein sequences that make up your database. These sequences must be provided to the mean vectorization script in .fasta format and then converted to a .pkl file before the file path is inputed for sequence annotation.
