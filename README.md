@@ -17,4 +17,4 @@ You should adjust the output file name for each job, and batch size can be anyth
 ## Annotating Sequences
 Once the mean vectors have been calculated for the sequences, we can start the process to get annotation information for them. This will be done using the metabp_annotations.py script. 
 The general format of the command looks something like this:
-`python metabp_annotations.py get_annotations -i path/to/mean_vectors_file.txt -o path/to/output_directory`
+\n`python metabp_annotations.py get_annotations -i path/to/mean_vectors_file.txt -o path/to/output_directory`
