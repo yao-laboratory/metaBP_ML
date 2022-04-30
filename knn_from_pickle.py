@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import time
 
-db_file = "/work/yaolab/shared/2022_small_peptide/peptide_db.pkl"
+db_file = "./peptide_db.pkl"
 print("Loading database at " + str(datetime.now()))
 with open(db_file, "rb") as f:
     peptide_db = pickle.load(f)
