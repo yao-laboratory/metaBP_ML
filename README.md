@@ -6,6 +6,7 @@ To setup the conda environment needed to compute the mean vectors, run:
 
 `conda env create -f environment.yml`
 
+(In metaBP-ML, ESM and its model are used. The original codes and models can be found from their GitHub: https://github.com/facebookresearch/esm. The pre-trained model for general purpose "esm1b_t33_650M_UR50S" is used for our embedding work.)
 
 ## Creating a job to create mean vectors
 
