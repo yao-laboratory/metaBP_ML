@@ -30,3 +30,7 @@ This command must be run in the same environment as the command to create the me
 
 ## Database File Format
 Annotating the peptides requires access to a .pkl file of vectorized protein sequences that make up your database. These sequences must be provided to the mean vectorization script in .fasta format and then converted to a .pkl file before the file path is inputed for sequence annotation.
+To convert the vectors in pickle file:
+```
+  python pickle_db.py all_vectors.txt --output_file all_vectors.pkl
+```
