@@ -1,21 +1,21 @@
-protein_id      species tax_id  EC
-sp|P34701|RDRP_BPJP3    Enterobacteria phage JP34 (Bacteriophage JP34)  12019   2.7.7.48
-sp|P69178|STXB_BPH30    Bacteriophage H30       12371
-sp|P0DOK7|SPAN2_BPP21   Enterobacteria phage P21 (Bacteriophage 21) (Bacteriophage P21) 10711
-sp|P04445|TF1_BPSP1     Bacillus phage SP01 (Bacteriophage SP01)        10685
-sp|P0DJZ3|SPAN2_BPKMV   Pseudomonas phage phiKMV        204270
-sp|Q9T0V1|REPEB_BPT4    Enterobacteria phage T4 (Bacteriophage T4)      10665
-sp|P69188|SH_MUMP6      Mumps virus (strain Edingburgh 6) (MuV) 11164
-sp|P05867|REV_HV1Z3     Human immunodeficiency virus type 1 group M subtype U (isolate Z3) (HIV-1)      11680
-sp|P22113|SH_MUMPT      Mumps virus (strain Takahashi) (MuV)    11174
-sp|P28085|SH_MUMP4      Mumps virus (strain Edingburgh 4) (MuV) 11163
-sp|P12511|TAT_HV1Z8     Human immunodeficiency virus type 1 group M subtype D (isolate Z84) (HIV-1)     11681
-sp|Q00478|TGB3_CMVSI    Cymbidium mosaic virus (strain Singapore)       31725
-sp|Q38SP9|PB1F2_I83A8   Influenza A virus (strain A/Hong Kong/5/1983 H3N2)      387159
-sp|O71196|P4_GLRV3      Grapevine leafroll-associated virus 3 (isolate United States/NY1) (GLRaV-3) (Grapevine leafroll-associated closterovirus (isolate 109)) 651354
-sp|P03044|RPC3_LAMBD    Escherichia phage lambda (Bacteriophage lambda) 10710
-sp|P27333|TGB3_LSV      Lily symptomless virus (LSV)    12173
-sp|P20222|F93_SSV1      Sulfolobus spindle-shape virus 1 (SSV1) 244589
-sp|P13293|GJ_HHV2H      Human herpesvirus 2 (strain HG52) (HHV-2) (Human herpes simplex virus 2)        10315
-sp|P16516|GP166_BPPH2   Bacillus phage phi29 (Bacteriophage phi-29)     10756
-sp|P0C6G8|HBEAG_HBVB3   Hepatitis B virus genotype B2 (isolate Vietnam/9873/1997) (HBV-B)       489461
+protein_id	species	tax_id	EC
+sp|P34701|RDRP_BPJP3	Enterobacteria phage JP34 (Bacteriophage JP34)	12019	2.7.7.48
+sp|P69178|STXB_BPH30	Bacteriophage H30	12371	
+sp|P0DOK7|SPAN2_BPP21	Enterobacteria phage P21 (Bacteriophage 21) (Bacteriophage P21)	10711	
+sp|P04445|TF1_BPSP1	Bacillus phage SP01 (Bacteriophage SP01)	10685	
+sp|P0DJZ3|SPAN2_BPKMV	Pseudomonas phage phiKMV	204270	
+sp|Q9T0V1|REPEB_BPT4	Enterobacteria phage T4 (Bacteriophage T4)	10665	
+sp|P69188|SH_MUMP6	Mumps virus (strain Edingburgh 6) (MuV)	11164	
+sp|P05867|REV_HV1Z3	Human immunodeficiency virus type 1 group M subtype U (isolate Z3) (HIV-1)	11680	
+sp|P22113|SH_MUMPT	Mumps virus (strain Takahashi) (MuV)	11174	
+sp|P28085|SH_MUMP4	Mumps virus (strain Edingburgh 4) (MuV)	11163	
+sp|P12511|TAT_HV1Z8	Human immunodeficiency virus type 1 group M subtype D (isolate Z84) (HIV-1)	11681	
+sp|Q00478|TGB3_CMVSI	Cymbidium mosaic virus (strain Singapore)	31725	
+sp|Q38SP9|PB1F2_I83A8	Influenza A virus (strain A/Hong Kong/5/1983 H3N2)	387159	
+sp|O71196|P4_GLRV3	Grapevine leafroll-associated virus 3 (isolate United States/NY1) (GLRaV-3) (Grapevine leafroll-associated closterovirus (isolate 109))	651354	
+sp|P03044|RPC3_LAMBD	Escherichia phage lambda (Bacteriophage lambda)	10710	
+sp|P27333|TGB3_LSV	Lily symptomless virus (LSV)	12173	
+sp|P20222|F93_SSV1	Sulfolobus spindle-shape virus 1 (SSV1)	244589	
+sp|P13293|GJ_HHV2H	Human herpesvirus 2 (strain HG52) (HHV-2) (Human herpes simplex virus 2)	10315	
+sp|P16516|GP166_BPPH2	Bacillus phage phi29 (Bacteriophage phi-29)	10756	
+sp|P0C6G8|HBEAG_HBVB3	Hepatitis B virus genotype B2 (isolate Vietnam/9873/1997) (HBV-B)	489461	
