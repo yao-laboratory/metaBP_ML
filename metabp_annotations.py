@@ -1,15 +1,15 @@
 import argparse
 import os
 
-def get_annotations(mean_vector_fp, output_fp, db_fp):
-    pkl_outfp = output_fp + "/vectors.pkl"
-    pickle_vectors = "python pickle_db.py -u "+mean_vector_fp+" --output_file "+pkl_outputfp
+def get_annotations(mean_vector_fp, output_fp, db_fp, annotation_paths):
+    pkl_output_fp = output_fp + "/vectors.pkl"
+    pickle_vectors = "python pickle_db.py "+mean_vector_fp+" --output_file "+pkl_output_fp
     os.system(pickle_vectors)
     knn_fp = output_fp + "/knn_output.csv"
-    knn_str = "python -u knn_from_pickle.py "+pickle_outfp+" --output_file "+knn_fp+" --nodes 4 --db "+db_fp
+    knn_str = "python -u knn_from_pickle.py "+pkl_output_fp+" --output_file "+knn_fp+" --nodes 4 --db "+db_fp
     os.system(knn_str)
     annotation_fp = output_fp + "/annotated_sequences.csv"
-    annotation_str = "python annotate_proteins.py "+knn_fp+" "+annotation_fp
+    annotation_str = "python annotate_proteins.py "+knn_fp+" "+annotation_fp+" "+annotation_paths
     os.system(annotation_str)
     
 def main():
@@ -39,14 +39,21 @@ def main():
         "-db", dest="db_path",
         help="A path to the .pkl file for the peptide database",
     )
+    annotation_parser.add_argument(
+        "-a",
+        dest="annotation_paths",
+        type=str,
+        help="The paths to the annotation .txt files that match the peptide database",
+    )
     arguments = parser.parse_args()
 
-    if arguments.method == "metabp_annotation":
-        mean_vector_fp = arguments.mean_vectorfp
-        output_file_path = arguments.output_file_path
+    if arguments.method == "get_annotations":
+        mean_vector_fp = arguments.mean_vector_fp
+        output_fp = arguments.output_file_path
         db_path = arguments.db_path
+        annotation_paths = arguments.annotation_paths
         # call function
-        get_annotations(mean_vector_fp, output_fp, db_path)
+        get_annotations(mean_vector_fp, output_fp, db_path, annotation_paths)
     else:
         print("Incorrect input, please check parameters and try again")
         

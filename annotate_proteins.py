@@ -32,8 +32,11 @@ def find_best_species(neighbor_df):
             tax_freq[i] += 1
         else:
             tax_freq[i] = 1
-    most_freq = max(tax_freq, key=tax_freq.get)
-    if tax_freq[most_freq] == 1:
+
+    most_freq = 0
+    if len(tax_freq) > 0:
+        most_freq = max(tax_freq, key=tax_freq.get)
+    if len(tax_freq) > 0 and tax_freq[most_freq] == 1:
         tax_num = tax_col[0]
     else:
         tax_num = most_freq
@@ -53,9 +56,11 @@ def find_best_ec(neighbor_df):
             ec_freq[i] += 1
         else:
             ec_freq[i] = 1
-
-    most_freq = max(ec_freq, key=ec_freq.get)
-    if ec_freq[most_freq] == 1:
+    
+    most_freq = 0
+    if len(ec_freq) > 0:
+        most_freq = max(ec_freq, key=ec_freq.get)
+    if len(ec_freq) > 0 and ec_freq[most_freq] == 1:
         ec_num = ec_col[0]
     else:
         ec_num = most_freq
@@ -71,7 +76,7 @@ def annotate_proteins(input_df, db):
     tax_nums = []
     spec_info = []
     ec_nums = []
-    
+
     for i in input_df.index:
         row = input_df.loc[i]
         prot_id = row.values[0]
@@ -82,23 +87,22 @@ def annotate_proteins(input_df, db):
         spec_info.append(spec)
         ec = find_best_ec(n_df)
         ec_nums.append(ec)
-    
+
     annotated = pd.DataFrame()
     annotated["protein_id"] = prot_ids
     annotated["species"] = spec_info
     annotated["tax_id"] = tax_nums
     annotated["EC"] = ec_nums
-    
+
     return annotated
 
 def main(argv):
-    db_dir = "/work/yaolab/shared/2022_small_peptide/mitra/db_protid_split/"
-    db_fps = [db_dir+"prot_ids1_annot.txt", db_dir+"prot_ids2_annot.txt", db_dir+"prot_ids3_annot.txt", db_dir+"prot_ids4_annot.txt", db_dir+"prot_ids5_annot.txt"]
+    db_fps = argv[2].split(",")
     db = load_db(db_fps)
-    input_df = make_input_df(argv[0])
+    input_df = make_input_df(argv[0]).astype(str)
     annotated = annotate_proteins(input_df, db)    
     path = argv[1]
-    annotated.to_csv(path)
+    annotated.to_csv(path, index=False)
     print(path)
     print("Done")
 

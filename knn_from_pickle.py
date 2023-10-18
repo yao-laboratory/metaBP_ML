@@ -16,7 +16,7 @@ def load_database(db_file):
 
 
 
-def nearest_k_neighbors(threshold, k, input_protein):
+def nearest_k_neighbors(threshold, k, db, input_protein):
     result = [("",threshold)]*(k+1)
     for d in db:
         temp = np.subtract(input_protein[1],d[1])
@@ -31,11 +31,11 @@ def nearest_k_neighbors(threshold, k, input_protein):
     return tuple(result_list)
     
 
-def multiple_process(num_thread, threshold, k, input_protein_list):
+def multiple_process(num_thread, threshold, k, db, input_protein_list):
        
     pool = multiprocessing.Pool(int(num_thread))
     
-    partial_function=functools.partial(nearest_k_neighbors, threshold, k)
+    partial_function=functools.partial(nearest_k_neighbors, threshold, k, db)
     
     results=pool.map(partial_function, input_protein_list)
     
@@ -75,7 +75,7 @@ def main(input_file, output_file, nodes, db_file):
     
     print("Calculating nearest neighbors at " + str(datetime.now()))
     
-    result_df = multiple_process(num_thread, threshold, k, input_protein_list)
+    result_df = multiple_process(num_thread, threshold, k, db, input_protein_list)
     
     result_df.to_csv(output_file,index=None, sep="\t")
     
