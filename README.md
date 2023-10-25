@@ -19,9 +19,11 @@ You should adjust the output file name for each job, and batch size can be anyth
 Once the mean vectors have been calculated for the sequences, we can start the process to get annotation information for them. This will be done using the metabp_annotations.py script. 
 The general format of the command looks something like this:
 ```
-  python metabp_annotations.py get_annotations -i path/to/mean_vectors_file.txt -o path/to/output_directory -db path/to/peptide_db.pkl 
+  python metabp_annotations.py get_annotations -i path/to/mean_vectors_file.txt -o path/to/output_directory -db path/to/peptide_db.pkl -a path/to/annotation_files,path/to/annotation_files
 ```
-This command must be run in the same environment as the command to create the mean vectors. The xml file for this environment can be found in the repository (environment.yml). This environment is named metabp_ml and contains all the necessary packages for the scripts to run without error. 
+This command must be run in the same environment as the command to create the mean vectors. The xml file for this environment can be found in the repository (environment.yml). This environment is named metabp_ml and contains all the necessary packages for the scripts to run without error. The annotation files must be separated by a single comma and no spaces as an argument. The annotation files must correlate with peptides in the peptide database to get proper results.
+
+In the testing folder are a database file and an annotation file that can be used to test the functionality of the annotations script.
 
 ## MetaBP Annotation Output Files
 - vectors.pkl: mean vector pickle file

@@ -43,7 +43,7 @@ def main():
         "-a",
         dest="annotation_paths",
         type=str,
-        help="The paths to the annotation .txt files that match the peptide database",
+        help="The paths to the annotation .txt files that match the peptide database, separated with commas",
     )
     arguments = parser.parse_args()
 
