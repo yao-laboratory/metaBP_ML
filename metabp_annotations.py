@@ -1,12 +1,13 @@
 import argparse
 import os
+import subprocess
 
-def get_annotations(mean_vector_fp, output_fp, db_fp, annotation_paths):
+def get_annotations(mean_vector_fp, output_fp, db_fp, annotation_paths, dimensions):
     pkl_output_fp = output_fp + "/vectors.pkl"
     pickle_vectors = "python pickle_db.py "+mean_vector_fp+" --output_file "+pkl_output_fp
     os.system(pickle_vectors)
     knn_fp = output_fp + "/knn_output.csv"
-    knn_str = "python -u knn_from_pickle.py "+pkl_output_fp+" --output_file "+knn_fp+" --nodes 4 --db "+db_fp
+    knn_str = "python -u knn_from_pickle.py "+pkl_output_fp+" --output_fp "+output_fp+" --nodes 4 --db "+db_fp+" --dim "+str(dimensions)
     os.system(knn_str)
     annotation_fp = output_fp + "/annotated_sequences.csv"
     annotation_str = "python annotate_proteins.py "+knn_fp+" "+annotation_fp+" "+annotation_paths
@@ -45,6 +46,13 @@ def main():
         type=str,
         help="The paths to the annotation .txt files that match the peptide database, separated with commas",
     )
+    annotation_parser.add_argument(
+        "-dim",
+        dest="dimensions",
+        type=int,
+        help="The number of dimensions by the ESM model. Determines which ESM model is used. Options are 1280 and 2560",
+        default=1280
+    )
     arguments = parser.parse_args()
 
     if arguments.method == "get_annotations":
@@ -52,8 +60,9 @@ def main():
         output_fp = arguments.output_file_path
         db_path = arguments.db_path
         annotation_paths = arguments.annotation_paths
+        dimensions = arguments.dimensions
         # call function
-        get_annotations(mean_vector_fp, output_fp, db_path, annotation_paths)
+        get_annotations(mean_vector_fp, output_fp, db_path, annotation_paths, dimensions)
     else:
         print("Incorrect input, please check parameters and try again")
         
