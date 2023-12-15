@@ -5,6 +5,7 @@ import numpy
 import torch
 from Bio import SeqIO
 from io import StringIO
+import time
 
 numpy.set_printoptions(threshold=sys.maxsize)
 
@@ -45,15 +46,15 @@ def batch_data(data, batch_size):
     return batched_data
     
     
-def compute_mean_vectors(prepared_data, model, alphabet, batch_converter, output_file): 
+def compute_mean_vectors(prepared_data, model, alphabet, batch_converter, output_file, number_of_layers): 
    
     batch_labels, batch_strs, batch_tokens = batch_converter(prepared_data)
     
     print("Calculating mean vectors")
 
     with torch.no_grad():
-        results = model(batch_tokens, repr_layers=[33], return_contacts=True)
-    token_representations = results["representations"][33]
+        results = model(batch_tokens, repr_layers=[number_of_layers], return_contacts=True)
+    token_representations = results["representations"][number_of_layers]
     
     print("Mean vectors calculated")
     
@@ -65,19 +66,30 @@ def compute_mean_vectors(prepared_data, model, alphabet, batch_converter, output
             out_file.write(f'{name}, {mean_str}\n')
      
     
-def main(input_file, output_file, batch_size):
+def main(input_file, output_file, batch_size, model_version):
+    start_time = time.time()
     data = format_data(input_file)
     batched_data = batch_data(data, batch_size)
     
     print("Loading models")
-    model, alphabet = torch.hub.load("facebookresearch/esm:main", "esm1b_t33_650M_UR50S")
+    if model_version == "old":
+        model, alphabet = torch.hub.load("facebookresearch/esm:main", "esm1b_t33_650M_UR50S") # 1280 dimensions
+        number_of_layers = 33
+    elif model_version == "new_1280":
+        model, alphabet = torch.hub.load("facebookresearch/esm:main", "esm2_t33_650M_UR50D") # 1280 dimensions
+        number_of_layers = 33
+    else:
+        model, alphabet = torch.hub.load("facebookresearch/esm:main", "esm2_t36_3B_UR50D") # 2560 dimensions
+        number_of_layers = 36
+    
     batch_converter = alphabet.get_batch_converter()
     print("Models loaded")
     
     for batch in batched_data:
-        compute_mean_vectors(batch, model, alphabet, batch_converter, output_file)
-    
+        compute_mean_vectors(batch, model, alphabet, batch_converter, output_file, number_of_layers)
+    end_time = time.time()
     print("Finished processing")
+    print(end_time-start_time)
     
 
 def parse_args():
@@ -99,6 +111,12 @@ def parse_args():
         type=int,
         default="100",
     )
+    parser.add_argument(
+        "--model",
+        help="Which ESM model is being used. Options are 'old', 'new_1280', and 'new_2560'",
+        type=str,
+        default="new_1280",
+    )
     args = parser.parse_args()
     return args
 
@@ -106,4 +124,4 @@ def parse_args():
 if __name__ == "__main__":
     
     args = parse_args()
-    main(args.input_file, args.output_file, args.batch_size)
+    main(args.input_file, args.output_file, args.batch_size, args.model)
