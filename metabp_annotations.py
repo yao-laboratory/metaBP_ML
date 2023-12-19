@@ -1,8 +1,10 @@
 import argparse
 import os
 import subprocess
+import time
 
 def get_annotations(mean_vector_fp, output_fp, db_fp, annotation_paths, dimensions):
+    start_time = time.time()
     pkl_output_fp = output_fp + "/vectors.pkl"
     pickle_vectors = "python pickle_db.py "+mean_vector_fp+" --output_file "+pkl_output_fp
     os.system(pickle_vectors)
@@ -12,6 +14,8 @@ def get_annotations(mean_vector_fp, output_fp, db_fp, annotation_paths, dimensio
     annotation_fp = output_fp + "/annotated_sequences.csv"
     annotation_str = "python annotate_proteins.py "+knn_fp+" "+annotation_fp+" "+annotation_paths
     os.system(annotation_str)
+    end_time = time.time()
+    print("get_annotations script took " + str(end_time-start_time) + " to finish")
     
 def main():
     parser = argparse.ArgumentParser(
