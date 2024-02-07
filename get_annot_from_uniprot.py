@@ -73,8 +73,24 @@ def annotate_from_uniprot(protein_id_string):
         tax_end_2=data.find(";",tax_pos)
         tax=data[tax_pos+11:min(tax_end,tax_end_2)]
 
+    go_values = []
+    go_value_not_found = True
+    go_pos = 0
+    while(go_value_not_found):
+        go_pos=data.find("GO:",go_pos+1)
+        if go_pos > 0:
+            go_end=data.find(";",go_pos)
+            go_values.append(data[go_pos+3:go_end])
+        else:
+            go_value_not_found = False
+    go_value_string = ''
+    for go_value in go_values:
+        go_value_string += go_value
+        go_value_string += ','
+    go_value_string = go_value_string[:-1]
+
     #output_file.write(protein_id_string+"\t"+species+"\t"+tax+"\t"+ec+"\n")
-    result_tuple=(protein_id_string,species,tax,ec)
+    result_tuple=(protein_id_string,species,tax,ec, go_value_string)
     return result_tuple
 
 def annotate_from_uniprot_parallel(inputfilename, outputfilename, num_thread):
@@ -90,7 +106,7 @@ def annotate_from_uniprot_parallel(inputfilename, outputfilename, num_thread):
     end = time.time()
     print(end-start)
     
-    result_df=pd.DataFrame.from_records(result_tuples,columns=["protein_id","species","tax_id","EC"])
+    result_df=pd.DataFrame.from_records(result_tuples,columns=["protein_id","species","tax_id","EC", "GO values"])
     
     result_df.to_csv(outputfilename,index=None, sep="\t")
 
