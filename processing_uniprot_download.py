@@ -25,10 +25,14 @@ def process_file(input_file, output_file):
                     new_header = '\t'.join(new_header_list)+'\n'
                     out_file.write(new_header)
                 else:
-                    if len(line) < 60 or i == len(lines) or lines[i+1][0] == '>':
+                    try:
+                        if len(line) < 60 or i == len(lines) or lines[i+1][0] == '>':
+                            out_file.write(line)
+                        else:
+                            out_file.write(line[:-1])
+                    except IndexError:
+                        # Happens when new line character at end of file
                         out_file.write(line)
-                    else:
-                        out_file.write(line[:-1])
 
 def main(argv):
     start_time = time.time()
@@ -36,7 +40,7 @@ def main(argv):
     outputfilename = argv[1]
     process_file(inputfilename, outputfilename)
     end_time = time.time()
-    print(end_time-start_time)
+    print(str(end_time-start_time) + " seconds")
 
 if __name__ == "__main__":
     main(sys.argv[1:])

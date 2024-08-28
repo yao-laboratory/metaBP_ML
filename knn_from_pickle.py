@@ -12,6 +12,7 @@ import faiss
 
 def load_database(db_file):
     print("Loading database at " + str(datetime.now()))
+    print("Database: " + db_file)
     with open(db_file, "rb") as f:
         peptide_db = pickle.load(f)
     print("Database loaded at " + str(datetime.now()))
@@ -20,19 +21,19 @@ def load_database(db_file):
 def faiss_k_nearest_neighbors(num_thread, threshold, k, db, input_protein_list, index_file_path, dimensions):
     if not os.path.exists(index_file_path):
         # Create new index
+        print("Creating index")
         numpy_db = convert_to_numpy_array(db)
-
         d = dimensions                           # dimensions
-
         index = faiss.IndexFlatL2(d)   # build the index
         index.add(numpy_db)                  # add vectors to the index
-        
         with open(index_file_path, "wb") as pick:
             pickle.dump(index, pick)
     else:
         # Load index
+        print("Loading index")
         with open(index_file_path, "rb") as f:
             index = pickle.load(f)
+    print("Index loaded")
 
     vectors_to_search = convert_to_numpy_array(input_protein_list)
     D, I = index.search(vectors_to_search, k)
@@ -54,8 +55,17 @@ def faiss_k_nearest_neighbors(num_thread, threshold, k, db, input_protein_list, 
 def convert_to_numpy_array(list):
     # Removes index from array and then converts to numpy array
     array = []
+    valid_lines = 0
+    invalid_lines = 0
     for line in list:
         array.append(line[1])
+        if(len(line[1]) != 1280):
+            invalid_lines += 1
+        else:
+            valid_lines += 1
+    print(invalid_lines)
+    print(valid_lines)
+            
     return np.array(array)
 
 '''

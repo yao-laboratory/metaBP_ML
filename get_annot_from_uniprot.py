@@ -41,18 +41,19 @@ def annotate_from_uniprot(protein_id_string):
         elif err.code == 403:
             error_message="Error code: Access denied!"
         else:
-            error_message="Something happened! Error code :"+err.code
+            error_message="Something happened! Error code :"+str(err.code)
         pass
     except urllib.error.URLError as err:
-        error_message="Some other error happened: Error code :"+err.reason
+        error_message="Some other error happened: Error code :"+str(err.reason)
         pass
 
     if error_message!="":
-        result_tuple=(protein_id_string,error_message,"","")
+        result_tuple=(protein_id_string,error_message,"","","")
+        print(result_tuple)
         return result_tuple
 
     data = html_bytes.decode("utf-8")
-    pos=data.find("OS ")
+    pos=data.find("\nOS ")
     pos_end=data.find(".\n",pos)
     species=""
     ec=""
@@ -61,11 +62,11 @@ def annotate_from_uniprot(protein_id_string):
         species=data[pos+3:pos_end].strip()
         species=species.replace("\nOS  ","")
 
-    ec_pos=data.find("EC=")
+    ec_pos=data.find(" EC=")
     if ec_pos>=0:
-        ec_end=data.find(" ",ec_pos)
+        ec_end=data.find(" ",ec_pos+1)
         ec_end_2=data.find(";",ec_pos)
-        ec=data[ec_pos+3:min(ec_end,ec_end_2)]
+        ec=data[ec_pos+4:min(ec_end,ec_end_2)]
 
     tax_pos=data.find("NCBI_TaxID=")
     if tax_pos>=0:
@@ -77,10 +78,12 @@ def annotate_from_uniprot(protein_id_string):
     go_value_not_found = True
     go_pos = 0
     while(go_value_not_found):
-        go_pos=data.find("GO:",go_pos+1)
+        # Changed finding go string
+        go_pos=data.find(" GO:",go_pos+1)
+        # go_pos=data.find("GO:",go_pos+1)
         if go_pos > 0:
-            go_end=data.find(";",go_pos)
-            go_values.append(data[go_pos+3:go_end])
+            go_end=data.find(";",go_pos+4)
+            go_values.append(data[go_pos+4:go_end])
         else:
             go_value_not_found = False
     go_value_string = ''
@@ -95,7 +98,12 @@ def annotate_from_uniprot(protein_id_string):
 
 def annotate_from_uniprot_parallel(inputfilename, outputfilename, num_thread):
     
-    protein_id_list = [line.rstrip() for line in open(inputfilename,'r')]
+    # protein_id_list = [line.rstrip() for line in open(inputfilename,'r')]
+    # Will need to change this line to get first entry of file
+    protein_id_list = []
+    for line in open(inputfilename, 'r'):
+        if line[0] == '>':
+            protein_id_list.append(line.split('\t')[0][1:].rstrip())
     
     start = time.time()
     pool = multiprocessing.Pool(num_thread)
