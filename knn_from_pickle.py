@@ -1,14 +1,11 @@
 import argparse
-import pickle
-from datetime import datetime
-import multiprocessing
-import functools
+import faiss
 import numpy as np
 import os
 import pandas as pd
 import pickle
 import time
-import faiss
+from datetime import datetime
 
 def load_database(db_file):
     print("Loading database at " + str(datetime.now()))
@@ -23,16 +20,17 @@ def faiss_k_nearest_neighbors(num_thread, threshold, k, db, input_protein_list, 
         # Create new index
         print("Creating index")
         numpy_db = convert_to_numpy_array(db)
-        d = dimensions                           # dimensions
-        index = faiss.IndexFlatL2(d)   # build the index
-        index.add(numpy_db)                  # add vectors to the index
-        with open(index_file_path, "wb") as pick:
-            pickle.dump(index, pick)
+        d = dimensions  # Number of dimensions
+        index = faiss.IndexFlatL2(d)  # L2 distance index
+        index.add(numpy_db)  # Add vectors to the index
+        
+        # Save FAISS index
+        faiss.write_index(index, index_file_path)
     else:
-        # Load index
+        # Load existing FAISS index
         print("Loading index")
-        with open(index_file_path, "rb") as f:
-            index = pickle.load(f)
+        index = faiss.read_index(index_file_path)
+    
     print("Index loaded")
 
     vectors_to_search = convert_to_numpy_array(input_protein_list)
@@ -41,80 +39,70 @@ def faiss_k_nearest_neighbors(num_thread, threshold, k, db, input_protein_list, 
     # Converts the indexes back into their id
     array_with_query_id = np.empty((len(I), len(I[0]) + 1)).astype(str)
     distance_array_with_query_id = np.empty((len(D), len(D[0]) + 1)).astype(str)
-    for row in range(0, len(I)):
+    
+    for row in range(len(I)):
         array_with_query_id[row][0] = input_protein_list[row][0]
         distance_array_with_query_id[row][0] = input_protein_list[row][0]
-        for col in range(0, len(I[0])):
-            index = int(I[row][col])
-            array_with_query_id[row][col + 1] = str(db[index][0])
+        for col in range(len(I[0])):
+            index_id = int(I[row][col])
+            array_with_query_id[row][col + 1] = str(db[index_id][0])
             distance_array_with_query_id[row][col + 1] = str(D[row][col])
-    results_df = pd.DataFrame.from_records(array_with_query_id,columns=['query_id']+["top_"+str(i+1) for i in range(0,k)])
-    distance_results_df = pd.DataFrame.from_records(distance_array_with_query_id,columns=['query_id']+["top_"+str(i+1) for i in range(0,k)])
-    return (results_df, distance_results_df)
     
-def convert_to_numpy_array(list):
+    results_df = pd.DataFrame.from_records(array_with_query_id, columns=['query_id'] + ["top_" + str(i + 1) for i in range(k)])
+    distance_results_df = pd.DataFrame.from_records(distance_array_with_query_id, columns=['query_id'] + ["top_" + str(i + 1) for i in range(k)])
+    
+    return results_df, distance_results_df
+
+def convert_to_numpy_array(data_list):
     # Removes index from array and then converts to numpy array
     array = []
     valid_lines = 0
     invalid_lines = 0
-    for line in list:
+    for line in data_list:
         array.append(line[1])
-        if(len(line[1]) != 1280):
+        if len(line[1]) != 1280:
             invalid_lines += 1
         else:
             valid_lines += 1
-    print(invalid_lines)
-    print(valid_lines)
-            
+    
+    print("Invalid lines:", invalid_lines)
+    print("Valid lines:", valid_lines)
+
     return np.array(array)
 
-'''
-def main(thread):
-    num_thread=thread
-    threshold=99999999
-    k=3
-    input_protein_list=mock_db[0:20]
-    start = time.time()
-    result_df = multiple_process(num_thread, threshold, k, input_protein_list)
-    end = time.time()
-    print(end-start)
-    return result_df
-'''
-
 def main(input_file, output_fp, nodes, db_file, dimensions):
-    #global variable for db
-    db=load_database(db_file)
-    num_thread=nodes
-    threshold=9999999999
-    k=10
+    # Load database
+    db = load_database(db_file)
+    num_thread = nodes
+    threshold = 9999999999
+    k = 10
 
-
-    
     print("Loading input file at " + str(datetime.now()))
     with open(input_file, "rb") as f:
         input_protein_list = pickle.load(f)
     print("Input file loaded at " + str(datetime.now()))
-    
+
     print("Calculating nearest neighbors at " + str(datetime.now()))
 
-    index_file_path = output_fp + "/index.pkl"
+    index_file_path = os.path.join(output_fp, "index.faiss")  # Use .faiss extension
     
     start_time = time.time()
     faiss_results = faiss_k_nearest_neighbors(num_thread, threshold, k, db, input_protein_list, index_file_path, dimensions)
     faiss_id_results = faiss_results[0]
     faiss_distance_results = faiss_results[1]
     end_time = time.time()
-    print("K nearest neighbors took " + str(end_time-start_time) + " seconds to run")
 
-    knn_output_fp = output_fp + "/knn_output.csv"
-    distance_output_fp = output_fp + "/distance_output.csv"
-    faiss_id_results.to_csv(knn_output_fp,index=None, sep="\t")
-    faiss_distance_results.to_csv(distance_output_fp,index=None, sep="\t")
+    print("K nearest neighbors took " + str(end_time - start_time) + " seconds to run")
+
+    knn_output_fp = os.path.join(output_fp, "knn_output.csv")
+    distance_output_fp = os.path.join(output_fp, "distance_output.csv")
+    faiss_id_results.to_csv(knn_output_fp, index=None, sep="\t")
+    faiss_distance_results.to_csv(distance_output_fp, index=None, sep="\t")
     print("Distances nearest neighbors at " + str(datetime.now()))
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="This script takes in the output of compute_bulk_embeddings.py (of format (prot, mean_vector)) and outputs a pkl file.)"
+        description="This script takes in the output of compute_bulk_embeddings.py (of format (prot, mean_vector)) and outputs a pkl file."
     )
     parser.add_argument(
         "input_file",
@@ -126,7 +114,8 @@ def parse_args():
     )
     parser.add_argument(
         "--nodes",
-        default=24
+        default=24,
+        type=int
     )
     parser.add_argument(
         "--db",
@@ -140,7 +129,6 @@ def parse_args():
     )
     args = parser.parse_args()
     return args
-
 
 if __name__ == "__main__":
     args = parse_args()
